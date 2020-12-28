@@ -1,0 +1,45 @@
+#!/bin/sh
+#
+# DIARY_INSTALL need to be set
+#
+
+if [ -z "$DIARY_INSTALL" ]; then
+    echo "DIARY_INSTALL is missing"
+    exit 1
+fi
+
+if [ -z "$prog" ] ; then
+    prog=$0
+fi
+
+if [ "$1" = "-h" -o "$1" = "--help" ] ; then
+    cat -v << EOF
+Usage:
+    $prog                  to edit or create today's content
+    $prog DATE DESCRIPTION to specify a day
+    $prog -h               show this help
+
+EOF
+    sed -n 's/^#=\(.*\)/\1/p' "$DIARY_INSTALL/.common.sh"
+    exit 0
+fi
+
+.  "$DIARY_INSTALL/.common.sh" "$*" || die
+if [ ! -e "$diary_file" ] ; then
+    read -p "Create a new file $diary_file? (Y/n)" REPLY
+    if [ -z "$REPLY" -o "$REPLY" = Y -o "$REPLY" = y ] ; then
+        cat > "$diary_file" <<EOF 
+# `LANG=C date -d "$diary_day" +'%Y-%m-%d %A'`
+## SCHEDULE
+## TODO
+## NOTE
+EOF
+        if [ -x "$GIT_EXE" ]; then
+            "$GIT_EXE" add "$diary_file"
+        fi
+    else
+        exit
+    fi
+fi
+
+$EDITOR "$diary_file"

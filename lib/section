@@ -1,0 +1,63 @@
+#!/bin/sh
+#
+# Input (can be defined by the caller as ENV vars):
+#   $prog   : the true $0
+#   $section: <h2> name of diary
+#
+
+if [ -z "$DIARY_INSTALL" ]; then
+    echo "DIARY_INSTALL is missing"
+    exit 1
+fi
+
+if [ -z "$prog" ] ; then
+    prog=$0
+fi
+
+if [ -z "$section" ] ; then
+    read -p 'Specify a section ( todo | schedule | note ):' section
+    if [ -z "$section" ] ; then
+        echo 'Section is undefined.'
+        exit 1
+    fi
+fi
+section_upper=`echo $section | tr '[:lower:]' '[:upper:]'`
+
+if [ "$1" = "-h" -o "$1" = "--help" ] ; then
+    cat -v << EOF
+Usage:
+    $prog
+        to show ${section}s within a week (7 days)
+        and '## $section_upper' section in DIARY_ROOT/*.md
+
+    $prog DATE DESCRIPTION
+        to show a ${section} in a specific day
+
+    $prog -h
+        show this help
+
+EOF
+    sed -n 's/^#=\(.*\)/\1/p' $DIARY_INSTALL/.common.sh
+    exit 0
+fi
+
+. "$DIARY_INSTALL/.common.sh" "$*" || die
+
+if [ -n "$1" ] ; then
+    # A specific day
+    if [ ! -e "$diary_file" ] ; then
+        echo "There is no $section for $diary_day"
+        $DIARY_INSTALL/edit $*
+    fi
+    cat "$diary_file"
+else
+    # Show a week
+    for i in `seq 0 7`; do
+        . "$DIARY_INSTALL/.common.sh" "$diary_day +$i days"
+        if [ -r $diary_file ] ; then
+            cat "$diary_file"
+        fi
+    done
+    cat "$DIARY_ROOT"/*.md
+    fi | awk "/^#+\\s/{show=0} /^#\\s+/{render_day=\"\\n\\033[1;31m\" \$0 \"\\033[0m\"} {if(show){if(render_day){print render_day; render_day=0} print}} /^##\\s+$section_upper/{show=1}"
+echo

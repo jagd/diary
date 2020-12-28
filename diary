@@ -1,0 +1,81 @@
+#!/bin/sh
+
+if [ -z "$DIARY_INSTALL" ]; then
+    export DIARY_INSTALL=$(dirname $(realpath "$0"))/lib
+fi
+if [ -z "$GIT_EXE" ]; then
+    export GIT_EXE=`which git 2> /dev/null`
+fi
+if [ -z "$DIARY_ROOT" ] ; then
+    export DIARY_ROOT=`pwd`
+fi
+
+usage () {
+        cat << EOF
+    Usage: $0 [COMMAND] [ARGUMENTS]
+        COMMAND:
+            One of { edit | export | schedule | todo | git }
+            COMMAND = edit if omitted
+
+        ARGUMENTS:
+            See '$0 command -h'
+
+    Environment variable:
+
+        A predefined DIARY_ROOT overwrite the current
+        directory as the root of markdown folders.
+
+        GIT_EXE overwrite the path of git executable
+
+    Examples:
+        $0 (which equals to '$0 edit today')
+
+        $0 2 days ago
+        $0 yesterday
+        $0 today
+        $0 tomorrow
+        $0 2 days
+
+        $0 last Monday
+        $0 Thursday
+        $0 next Tue
+
+        $0 schedule (shows schedules in one week)
+        $0 schedule yesteday
+
+        $0 todo (shows schedules in one week)
+        $0 todo tomorrow
+
+        $0 export -o diary.html
+
+        $0 git commit -a
+EOF
+}
+
+cmd=$1
+case "$cmd" in
+    -h | --help )
+        usage
+        ;;
+    edit | export )
+        shift
+        prog="$0 $cmd" exec "$DIARY_INSTALL/$cmd" $*
+        ;;
+    schedule | todo )
+        shift
+        prog="$0 $cmd" section=$cmd exec "$DIARY_INSTALL/section" $*
+        ;;
+    git )
+        shift
+        if [ -x "$GIT_EXE" -a -d "$DIARY_ROOT/.git" ]; then
+                cd "$DIARY_ROOT"
+                exec "$GIT_EXE" $*
+        else
+            echo 'Error: git executable or not found or $GIT_EXE not set'
+            exit 1
+        fi
+        ;;
+    * )
+        exec "$DIARY_INSTALL/edit" $*
+        ;;
+esac
