@@ -2,6 +2,7 @@
 
 ## Installation
 - Download the files to any place and symbolic link `diary` to a folder of PATH
+- [Optional] Source `complete.bash` in shell profile or `.bashrc` for completion
 - Command `realpath` should be available (MacOSX needs additional settings)
 
 ## Usage
