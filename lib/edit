@@ -20,11 +20,11 @@ Usage:
     $prog -h               show this help
 
 EOF
-    sed -n 's/^#=\(.*\)/\1/p' "$DIARY_INSTALL/.common.sh"
+    sed -n 's/^#=\(.*\)/\1/p' "$DIARY_INSTALL/lib/.common.sh"
     exit 0
 fi
 
-day_desc="$*" . "$DIARY_INSTALL/.common.sh" || die
+day_desc="$*" . "$DIARY_INSTALL/lib/.common.sh" || die
 if [ ! -e "$diary_file" ] ; then
     read -p "Create a new file $diary_file? (Y/n)" REPLY
     if [ -z "$REPLY" -o "$REPLY" = Y -o "$REPLY" = y ] ; then
@@ -34,9 +34,7 @@ if [ ! -e "$diary_file" ] ; then
 ## TODO
 ## NOTE
 EOF
-        if [ -x "$GIT_EXE" ]; then
-            "$GIT_EXE" add "$diary_file"
-        fi
+        "$DIARY_INSTALL/diary" git add "$diary_file"
     else
         exit
     fi

@@ -37,27 +37,29 @@ Usage:
         show this help
 
 EOF
-    sed -n 's/^#=\(.*\)/\1/p' $DIARY_INSTALL/.common.sh
+    sed -n 's/^#=\(.*\)/\1/p' $DIARY_INSTALL/lib/.common.sh
     exit 0
 fi
 
-day_desc="$*" . "$DIARY_INSTALL/.common.sh" || die
+day_desc="$*" . "$DIARY_INSTALL/lib/.common.sh" || die
 
 if [ -n "$1" ] ; then
     # A specific day
     if [ ! -e "$diary_file" ] ; then
         echo "There is no $section for $diary_day"
-        $DIARY_INSTALL/edit $*
+        $DIARY_INSTALL/lib/edit $*
     fi
     cat "$diary_file"
 else
     # Show a week
+    base_diary_day="$diary_day"
     for i in `seq 0 7`; do
-        day_desc="$diary_day $i days" . "$DIARY_INSTALL/.common.sh"
+        day_desc="$base_diary_day $i days" . "$DIARY_INSTALL/lib/.common.sh"
         if [ -r "$diary_file" ] ; then
             cat "$diary_file"
         fi
     done
+    # diary_day is dirty !!
     cat "$DIARY_ROOT"/*.md
     fi | awk "/^#+\\s/{show=0} /^#\\s+/{render_day=\"\\n\\033[1;31m\" \$0 \"\\033[0m\"} {if(show){if(render_day){print render_day; render_day=0} print}} /^##\\s+$section_upper/{show=1}"
 echo
