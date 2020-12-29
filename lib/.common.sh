@@ -3,13 +3,11 @@
 # This file should be source'd.
 #
 # Usage:
-#   . "$DIARY_INSTALL/.common.sh" $* || die
+#   day_desc="next Tue" . "$DIARY_INSTALL/.common.sh" || die
+#   A sourced script cannot take argument (in dash)
 #
-# Environment variable:
-#   $DIARY_ROOT
-#
-# Argument:
-#   The DATE to be operated
+# Input:
+#   Env var $day_desc as the DATE to be operated
 #   Today if empty
 #
 # Output:
@@ -18,6 +16,9 @@
 #   $diary_basename
 #   $diary_file
 #   Also, $EDITOR is set if empty.
+#
+# Environment variable:
+#   $DIARY_ROOT
 #
 #=Examples of DATE DESCRIPTION:
 #=    2020-12-24
@@ -40,12 +41,12 @@ if [ -z "$DIARY_ROOT" ] ; then
     die "DIARY_ROOT not set"
 fi
 
-if [ -z "$1" ] ; then
+if [ -z "$day_desc" ] ; then
     diary_day=today
 else
-    diary_day=`date -d "$*" +'%Y-%m-%d' 2> /dev/null`
+    diary_day=`date -d "$day_desc" +'%Y-%m-%d' 2> /dev/null`
     if [ -z "$diary_day" ] ; then
-        die "Invalid date description '$*'"
+        die "Invalid date description '$day_desc'"
     fi
 fi
 

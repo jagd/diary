@@ -24,7 +24,7 @@ EOF
     exit 0
 fi
 
-.  "$DIARY_INSTALL/.common.sh" "$*" || die
+day_desc="$*" . "$DIARY_INSTALL/.common.sh" || die
 if [ ! -e "$diary_file" ] ; then
     read -p "Create a new file $diary_file? (Y/n)" REPLY
     if [ -z "$REPLY" -o "$REPLY" = Y -o "$REPLY" = y ] ; then

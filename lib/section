@@ -41,7 +41,7 @@ EOF
     exit 0
 fi
 
-. "$DIARY_INSTALL/.common.sh" "$*" || die
+day_desc="$*" . "$DIARY_INSTALL/.common.sh" || die
 
 if [ -n "$1" ] ; then
     # A specific day
@@ -53,8 +53,8 @@ if [ -n "$1" ] ; then
 else
     # Show a week
     for i in `seq 0 7`; do
-        . "$DIARY_INSTALL/.common.sh" "$diary_day +$i days"
-        if [ -r $diary_file ] ; then
+        day_desc="$diary_day $i days" . "$DIARY_INSTALL/.common.sh"
+        if [ -r "$diary_file" ] ; then
             cat "$diary_file"
         fi
     done
