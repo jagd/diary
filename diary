@@ -27,18 +27,17 @@ usage () {
 
         GIT_EXE overwrite the path of git executable
 
-    Examples:
-        $0 (which equals to '$0 edit today')
-
+    Examples (the command 'edit' is optional):
+        $0   (equivalent to '$0 edit' or '$0 edit today')
         $0 2 days ago
         $0 yesterday
         $0 today
         $0 tomorrow
         $0 2 days
-
         $0 last Monday
         $0 Thursday
         $0 next Tue
+        $0 any-file-in-the-folder-DIARY_ROOT.md
 
         $0 schedule (shows schedules in one week)
         $0 schedule yesteday
@@ -49,6 +48,7 @@ usage () {
         $0 export -o diary.html
 
         $0 git commit -a
+        $0 git status
 EOF
 }
 

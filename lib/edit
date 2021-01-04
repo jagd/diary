@@ -16,7 +16,8 @@ if [ "$1" = "-h" -o "$1" = "--help" ] ; then
     cat -v << EOF
 Usage:
     $prog                  to edit or create today's content
-    $prog DATE DESCRIPTION to specify a day
+    $prog DATE_DESCRIPTION to specify a day
+    $prog FILE_PATH        edit the file '\$DIARY_ROOT/FILE_PATH'
     $prog -h               show this help
 
 EOF
@@ -24,19 +25,31 @@ EOF
     exit 0
 fi
 
-day_desc="$*" . "$DIARY_INSTALL/lib/.common.sh" || die
-if [ ! -e "$diary_file" ] ; then
-    read -p "Create a new file $diary_file? (Y/n)" REPLY
-    if [ -z "$REPLY" -o "$REPLY" = Y -o "$REPLY" = y ] ; then
-        cat > "$diary_file" <<EOF 
+diary_file=""
+if [ -n "$1" -a -f "$DIARY_ROOT/$1" ] ; then
+        read -p "edit file $DIARY_ROOT/$1? (Y/n)" REPLY
+        if [ -z "$REPLY" -o "$REPLY" = Y -o "$REPLY" = y ] ; then
+            # still need to source common.sh for general setups
+            . "$DIARY_INSTALL/lib/.common.sh" || die
+            diary_file="$DIARY_ROOT/$1"
+        fi
+fi
+
+if [ -z "$diary_file" ] ; then
+    day_desc="$*" . "$DIARY_INSTALL/lib/.common.sh" || die
+    if [ ! -f "$diary_file" ] ; then
+        read -p "Create a new file $diary_file? (Y/n)" REPLY
+        if [ -z "$REPLY" -o "$REPLY" = Y -o "$REPLY" = y ] ; then
+            cat > "$diary_file" <<EOF 
 # `LANG=C date -d "$diary_day" +'%Y-%m-%d %A'`
 ## SCHEDULE
 ## TODO
 ## NOTE
 EOF
         "$DIARY_INSTALL/diary" git add "$diary_file"
-    else
-        exit
+        else
+            exit
+        fi
     fi
 fi
 

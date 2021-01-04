@@ -45,7 +45,7 @@ day_desc="$*" . "$DIARY_INSTALL/lib/.common.sh" || die
 
 if [ -n "$1" ] ; then
     # A specific day
-    if [ ! -e "$diary_file" ] ; then
+    if [ ! -f "$diary_file" ] ; then
         echo "There is no $section for $diary_day"
         $DIARY_INSTALL/lib/edit $*
     fi
