@@ -25,6 +25,8 @@ usage () {
         A predefined DIARY_ROOT overwrite the current
         directory as the root of markdown folders.
 
+        DIARY_PANDOC, if not empty, is the path of the pandoc executable.
+
         GIT_EXE overwrite the path of git executable
 
     Examples (the command 'edit' is optional):

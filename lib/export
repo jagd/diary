@@ -5,6 +5,14 @@ if [ -z "$DIARY_ROOT" ] ; then
     exit 1
 fi
 
+if [ -z "$DIARY_PANDOC" ] ; then
+    DIARY_PANDOC=`which pandoc`
+    if [ -z "$DIARY_PANDOC" ] ; then
+        echo "Cannnot find pandoc"
+        exit 1
+    fi
+fi
+
 if [ -z "$prog" ] ; then
     prog=$0
 fi
@@ -19,10 +27,6 @@ cat << EOF
 
     Further argument see documentation of `pandoc`.
 EOF
-    exit
-fi
-if ! which pandoc &> /dev/null ; then
-    echo "Cannnot find pandoc"
     exit
 fi
 
@@ -46,4 +50,4 @@ done |
             }
         }
     }' |
-    pandoc $*
+    "$DIARY_PANDOC" $*
