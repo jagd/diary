@@ -52,4 +52,4 @@ done |
             }
         }
     }' |
-    "$DIARY_PANDOC" $*
+    "$DIARY_PANDOC" "$@"

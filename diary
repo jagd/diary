@@ -61,23 +61,23 @@ case "$cmd" in
         ;;
     edit | export )
         shift
-        prog="$0 $cmd" exec "$DIARY_INSTALL/lib/$cmd" $*
+        prog="$0 $cmd" exec "$DIARY_INSTALL/lib/$cmd" "$@"
         ;;
     schedule | todo )
         shift
-        prog="$0 $cmd" section=$cmd exec "$DIARY_INSTALL/lib/section" $*
+        prog="$0 $cmd" section=$cmd exec "$DIARY_INSTALL/lib/section" "$@"
         ;;
     git )
         shift
         if [ -x "$GIT_EXE" -a -d "$DIARY_ROOT/.git" ]; then
                 cd "$DIARY_ROOT"
-                exec "$GIT_EXE" $*
+                exec "$GIT_EXE" "$@"
         else
             echo 'Error: git executable or not found or $GIT_EXE not set'
             exit 1
         fi
         ;;
     * )
-        exec "$DIARY_INSTALL/lib/edit" $*
+        exec "$DIARY_INSTALL/lib/edit" "$@"
         ;;
 esac
